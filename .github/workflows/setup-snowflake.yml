@@ -12,12 +12,15 @@ jobs:
         steps:
             - uses: actions/checkout@v4
             - run: gh variable set -f .github/.env
+              env:
+                GH_TOKEN: ${{ github.token }}
     setup-dbt:
         name: Update DBT project files
         runs-on: ubuntu-latest
         steps:
             - uses: actions/checkout@v4
             - run: |
+                echo ${{vars.project_name}}
                 yq 'with(. ; .profile = '${{vars.project_name}} | .name = '${{vars.project_name}}')'
 
             # - uses: mikefarah/yq@master
