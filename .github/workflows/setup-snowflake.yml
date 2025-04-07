@@ -11,10 +11,7 @@ jobs:
         runs-on: ubuntu-latest
         steps:
             - uses: actions/checkout@v4
-            - run: |
-                set -a
-                yq '.[] |(( select(kind == "scalar") | key + "='\''" + . + "'\''"),( select(kind == "seq") | key + "=(" + (map("'\''" + . + "'\''") | join(",")) + ")"))' .github/config.yml
-                set +a
+            - run: yq '.[] | "export " + key + "=" + value + @sh' .github/config.yml
               name: Export config file to env
             - run: echo $snowflake_account
             - run: export -p
