@@ -11,10 +11,15 @@ jobs:
         runs-on: ubuntu-latest
         steps:
             - uses: actions/checkout@v4
-            - run: yq -os $'.[] | "export " + key + "=\'" + . + "\'"' .github/config.yml
+            - run: |
+                yq e 'keys' .github/config.yml | while read -r key; do
+                value=$(yq e ".${key}" .github/config.yml)
+                echo "${key}=${value}" >> $GITHUB_ENV
+                done
               name: Export config file to env
             - run: echo $snowflake_account
             - run: export -p
+            - run: env
 
 
 
