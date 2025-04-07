@@ -10,7 +10,7 @@ jobs:
             - uses: actions/checkout@v4
             - run: yq -o=shell .github/config.yml
               name: Export config file to env
-            - run: echo $project-name
+            - run: echo $project_name
 
 
 
