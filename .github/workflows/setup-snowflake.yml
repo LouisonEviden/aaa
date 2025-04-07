@@ -11,7 +11,7 @@ jobs:
         runs-on: ubuntu-latest
         steps:
             - uses: actions/checkout@v4
-            - run: yq -os '.[] | "export " + key + "=\'" + . + "\'"' .github/config.yml
+            - run: yq -os $'.[] | "export " + key + "=\'" + . + "\'"' .github/config.yml
               name: Export config file to env
             - run: echo $snowflake_account
             - run: export -p
