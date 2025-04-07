@@ -1,0 +1,8 @@
+version: 1
+
+sources:
+  - name: source_db
+    database:
+    schema: RAW
+    tables:
+      - name: TABLE_NAME

@@ -1,0 +1,31 @@
+name: Setup Snowflake environment
+run-name: Setup Snowflake environment triggered by @${{ github.actor }}
+on:
+    workflow_dispatch:
+jobs:
+    setup-dbt:
+        name: Update DBT project files
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v4
+            - run: snap install yq
+            - run: yq -o=shell .github/config.yml
+              name: Export config file to env
+            - run: echo $project-name
+
+
+
+
+            # - uses: mikefarah/yq@master
+            #   id: project-name
+            #   with:
+            #     cmd: yq '.project-name' .github/config.yml
+            # - uses: mikefarah/yq@master
+            #   id: snowflake-account
+            #   with:
+            #     cmd: yq '.snowflake-account' .github/config.yml
+        # Update dbt files (dbt_project.yml, profiles.yml, schema.yml)
+    # setup-snowflake:
+        # Check if user is account admin ?
+        # Create database, schema, roles
+        # Assign roles to schema/db

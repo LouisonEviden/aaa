@@ -1,0 +1,40 @@
+name: Pull request DBT sanity check
+run-name: DBT Test triggered by @${{ github.actor }}
+on:
+  pull_request:
+    types:
+      - synchronize
+      - opened
+      - reopened
+    branches:
+      - main
+
+jobs:
+  dbt-test:
+    name: Run dbt tests
+    runs-on: ubuntu-latest
+    container:
+      image: ghcr.io/dbt-labs/dbt-core:1.9.3
+      credentials:
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+    steps:
+      - uses: actions/checkout@v4
+      - run: python -m pip install dbt-snowflake
+      - run: dbt test
+        env:
+          SNOW_PASSWORD: ${{ secrets.SNOW_PASSWORD }}
+
+  comment-pr:
+    needs: dbt-test
+    name: Approve Pull request
+    permissions:
+      contents: read
+      pull-requests: write
+    runs-on: ubuntu-latest
+    if: ${{ needs.dbt-test.result  == 'success' }}
+    steps:
+      - uses: actions/checkout@v4
+      - run: gh pr review --comment -b "DBT tests successfully passed !" ${{ github.event.number }}
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

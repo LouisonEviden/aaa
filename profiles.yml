@@ -1,0 +1,24 @@
+# For Github Actions only
+dbtservicenow2snow:
+  target: dev
+  outputs:
+    dev:
+      account:
+      database:
+      password: "{{ env_var('SNOW_PASSWORD') }}"
+      role:
+      schema: TECH
+      threads: 1
+      type: snowflake
+      user:
+      warehouse:
+    prod:
+      account:
+      database:
+      password: "{{ env_var('SNOW_PASSWORD') }}"
+      role:
+      schema: BRONZE
+      threads: 1
+      type: snowflake
+      user:
+      warehouse:

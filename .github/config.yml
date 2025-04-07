@@ -1,0 +1,6 @@
+project-name: <PROJECT_NAME>
+snowflake-account: <SNOWFLAKE_ACCOUNT>
+snowflake-user:
+snowflake-database:
+snowflake-role:
+snowflake-warehouse:
