@@ -8,7 +8,6 @@ jobs:
         runs-on: ubuntu-latest
         steps:
             - uses: actions/checkout@v4
-            #- run: snap install yq
             - run: yq -o=shell .github/config.yml
               name: Export config file to env
             - run: echo $project-name

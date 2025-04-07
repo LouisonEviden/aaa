@@ -1,6 +1,6 @@
-project-name: <PROJECT_NAME>
-snowflake-account: <SNOWFLAKE_ACCOUNT>
-snowflake-user:
-snowflake-database:
-snowflake-role:
-snowflake-warehouse:
+project_name: <PROJECT_NAME>
+snowflake_account: <SNOWFLAKE_ACCOUNT>
+snowflake_user:
+snowflake_database:
+snowflake_role:
+snowflake_warehouse:
