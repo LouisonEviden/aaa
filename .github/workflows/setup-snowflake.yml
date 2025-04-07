@@ -8,7 +8,7 @@ jobs:
         runs-on: ubuntu-latest
         steps:
             - uses: actions/checkout@v4
-            - run: eval $(yq e 'to_entries | .[] | "export \(.key)=\(.value)"' .github/config.yml)
+            - run: eval $(yq e '.[] | "export \(.key)=\(.value)"' .github/config.yml)
               name: Export config file to env
             - run: echo $snowflake_account
             - run: export -p
