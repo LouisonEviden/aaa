@@ -1,6 +1,6 @@
 name: Data model and Documentation refresh when merge with main
 run-name: DBT Run triggered by @${{ github.actor }}
-on:
+#on:
   push:
     branches:
       - main
