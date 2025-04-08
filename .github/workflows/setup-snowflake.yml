@@ -9,21 +9,18 @@ jobs:
     setup-github-variables:
         name: Set up Github Action variables
         runs-on: ubuntu-latest
-        permissions:
-            contents: write
         steps:
             - uses: actions/checkout@v4
-            - run: gh variable set -f .github/.env
-              env:
-                GH_TOKEN: ${{ github.token }}
+            - run: yq '.' .github/env.yml -os
+            - run: yq '.' .github/env.yml -os >> $GITHUB_ENV
     setup-dbt:
         name: Update DBT project files
         runs-on: ubuntu-latest
         steps:
             - uses: actions/checkout@v4
             - run: |
-                echo ${{vars.project_name}}
-                yq 'with(. ; .profile = '${{vars.project_name}} | .name = '${{vars.project_name}}')' dbt_project.yml
+                echo ${{env.project_name}}
+                yq 'with(. ; .profile = '${{env.project_name}}' | .name = '${{env.project_name}}')' dbt_project.yml
 
             # - uses: mikefarah/yq@master
             #   id: project-name
