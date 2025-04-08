@@ -1,9 +1,11 @@
 name: Setup Snowflake environment
 run-name: Setup Snowflake environment triggered by @${{ github.actor }}
 on:
+    ###
     push:
       branches:
         - main
+    ###
     workflow_dispatch:
 jobs:
     setup-dbt:
@@ -44,7 +46,8 @@ jobs:
             - uses: cardinalby/export-env-action@v2
               with:
                 envFile: '.github/.env'
-            - run: echo ${{ env.PROJECT_NAME }}
+            - run: pip install snowflake-cli
+            - run: snow --help
         # Check if user is account admin ?
         # Create database, schema, roles
         # Assign roles to schema/db
