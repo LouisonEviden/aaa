@@ -31,6 +31,7 @@ jobs:
     setup-snowflake:
         name: Setup Snowflake
         runs-on: ubuntu-latest
+        needs: setup-dbt
         steps:
             - run: echo ${{ env.PROJECT_NAME }}
         # Check if user is account admin ?
