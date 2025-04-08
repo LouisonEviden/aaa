@@ -15,7 +15,7 @@ jobs:
               id: get-env
               run: |
                 while read -r i;do
-                    echo "$i" >> $GITHUB_OUTPUT
+                    echo "$i" >> $GITHUB_ENV
                 done <<< "$(yq '.' .github/env.yml -os)"
     setup-dbt:
         name: Update DBT project files
@@ -39,8 +39,7 @@ jobs:
         runs-on: ubuntu-latest
         needs: get-env-settings
         steps:
-            - run: echo ${{ needs.get-env-settings.outputs }}
-            - run: echo ${{ needs.get-env-settings.outputs.PROJECT_NAME }}
+            - run: echo ${{ env.PROJECT_NAME }}
         # Check if user is account admin ?
         # Create database, schema, roles
         # Assign roles to schema/db
