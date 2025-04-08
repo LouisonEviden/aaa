@@ -12,7 +12,10 @@ jobs:
         steps:
             - uses: actions/checkout@v4
             - run: yq '.' .github/env.yml -os
-            - run: yq '.' .github/env.yml -os >> $GITHUB_ENV
+            - run: |
+                for i in $(yq '.' .github/env.yml -os); do
+                    $i >> $GITHUB_ENV
+                done
             - run: echo ${{env.project_name}}
             - run: |
                 echo ${{env.project_name}}
