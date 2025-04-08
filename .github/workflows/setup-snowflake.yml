@@ -16,11 +16,15 @@ jobs:
                 while read -r i;do
                     echo "$i" >> $GITHUB_ENV
                 done <<< "$(yq '.' .github/env.yml -os)"
-            - run: yq -i 'with(. ; .profile = env(PROJECT_NAME) | .name = env(PROJECT_NAME))' dbt_project.yml
+            - name: Update dbt_project.yml
+              run: yq -i 'with(. ; .profile = env(PROJECT_NAME) | .name = env(PROJECT_NAME))' dbt_project.yml
             - run: cat dbt_project.yml
-            - run: |
+            - run: yq -i 'with(.[env(PROJECT_NAME)].outputs.[]; .account = env(SNOWFLAKE_ACCOUNT) | .database = env(SNOWFLAKE_DATABASE) | .role = env(SNOWFLAKE_ROLE) | .user = env(SNOWFLAKE_USER) | .warehouse = env(SNOWFLAKE_WAREHOUSE))' profiles.yml
+            - name: Update profiles.yml
+              run: |
                 yq -i '(.template_profile_name | key) = env(PROJECT_NAME)' profiles.yml
-                yq -i 'with(.[env(PROJECT_NAME)].outputs.dev; .account = env(SNOWFLAKE_ACCOUNT) | .database = env(SNOWFLAKE_DATABASE))' profiles.yml
+                yq -i 'with(.[env(PROJECT_NAME)].outputs.dev; .account = env(SNOWFLAKE_ACCOUNT) | .database = env(SNOWFLAKE_DATABASE) | .role = env(SNOWFLAKE_ROLE) | .user = env(SNOWFLAKE_USER) | .warehouse = env(SNOWFLAKE_WAREHOUSE))' profiles.yml
+                yq -i 'with(.[env(PROJECT_NAME)].outputs.prod; .account = env(SNOWFLAKE_ACCOUNT) | .database = env(SNOWFLAKE_DATABASE) | .role = env(SNOWFLAKE_ROLE) | .user = env(SNOWFLAKE_USER) | .warehouse = env(SNOWFLAKE_WAREHOUSE))' profiles.yml
             - run: cat profiles.yml
         # Update dbt files (dbt_project.yml, profiles.yml, schema.yml)
     # setup-snowflake:
