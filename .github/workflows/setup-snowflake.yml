@@ -16,11 +16,11 @@ jobs:
                 while read -r i;do
                     echo "$i" >> $GITHUB_ENV
                 done <<< "$(yq '.' .github/env.yml -os)"
-            - run: yq 'with(. ; .profile = 'env(project_name)' | .name = 'env(project_name)')' dbt_project.yml
+            - run: yq 'with(. ; .profile = env(project_name) | .name = env(project_name))' dbt_project.yml
             - run: cat dbt_project.yml
             - run: |
-                yq '(.template_profile_name | key) = "env(project_name)"' profiles.yml
-                yq 'with(.[env(project_name)].outputs.dev; .account = "env(snowflake_account)" | .database = "env(snowflake_database)")' profiles.yml
+                yq '(.template_profile_name | key) = env(project_name)' profiles.yml
+                yq 'with(.[env(project_name)].outputs.dev; .account = env(snowflake_account) | .database = env(snowflake_database))' profiles.yml
             - run: cat profiles.yml
         # Update dbt files (dbt_project.yml, profiles.yml, schema.yml)
     # setup-snowflake:
