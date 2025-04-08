@@ -27,8 +27,12 @@ jobs:
             - name: Update models/schema.yml
               run: yq -i 'with(.sources.[]; .database = env(SNOWFLAKE_DATABASE))' models/schema.yml
             - run: cat models/schema.yml
-        # Update dbt files (dbt_project.yml, profiles.yml, schema.yml)
-    # setup-snowflake:
+            # Add git commit
+    setup-snowflake:
+        name: Setup Snowflake
+        runs-on: ubuntu-latest
+        steps:
+            - run: echo ${{ env.PROJECT_NAME }}
         # Check if user is account admin ?
         # Create database, schema, roles
         # Assign roles to schema/db
