@@ -9,6 +9,8 @@ jobs:
     setup-github-variables:
         name: Set up Github Action variables
         runs-on: ubuntu-latest
+        permissions:
+            contents: write
         steps:
             - uses: actions/checkout@v4
             - run: gh variable set -f .github/.env
@@ -21,7 +23,7 @@ jobs:
             - uses: actions/checkout@v4
             - run: |
                 echo ${{vars.project_name}}
-                yq 'with(. ; .profile = '${{vars.project_name}} | .name = '${{vars.project_name}}')'
+                yq 'with(. ; .profile = '${{vars.project_name}} | .name = '${{vars.project_name}}')' dbt_project.yml
 
             # - uses: mikefarah/yq@master
             #   id: project-name
