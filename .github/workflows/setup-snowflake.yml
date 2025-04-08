@@ -39,7 +39,8 @@ jobs:
         runs-on: ubuntu-latest
         needs: get-env-settings
         steps:
-            - run: echo ${{ job.get-env.outputs.PROJECT_NAME }}
+            - run: echo ${{ needs.get-env-settings.outputs }}
+            - run: echo ${{ needs.get-env-settings.outputs.PROJECT_NAME }}
         # Check if user is account admin ?
         # Create database, schema, roles
         # Assign roles to schema/db
