@@ -31,7 +31,7 @@ jobs:
             - name: Create Pull Request
               uses: peter-evans/create-pull-request@v7
               with:
-                token: ${{ secrets.PAT }}
+                token: ${{ secrets.GITHUB_TOKEN }}
                 commit-message: Set up DBT
                 branch: github_action/DBT_setup
                 title: DBT config set up
