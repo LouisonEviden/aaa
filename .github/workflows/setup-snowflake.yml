@@ -21,7 +21,7 @@ jobs:
             - run: cat dbt_project.yml
 
 
-            - run: yq 'with(.[env(PROJECT_NAME)].outputs; .[].account = env(SNOWFLAKE_ACCOUNT) | .[].database = env(SNOWFLAKE_DATABASE) | .[].role = env(SNOWFLAKE_ROLE) | .[].user = env(SNOWFLAKE_USER) | .[].warehouse = env(SNOWFLAKE_WAREHOUSE))' profiles.yml
+            - run: yq 'with(.[env(PROJECT_NAME)]; .outputs[].account = env(SNOWFLAKE_ACCOUNT) | .outputs[].database = env(SNOWFLAKE_DATABASE) | .outputs[].role = env(SNOWFLAKE_ROLE) | .outputs[].user = env(SNOWFLAKE_USER) | .outputs[].warehouse = env(SNOWFLAKE_WAREHOUSE))' profiles.yml
 
 
             - name: Update profiles.yml
