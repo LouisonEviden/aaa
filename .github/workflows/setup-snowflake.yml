@@ -19,7 +19,7 @@ jobs:
             - run: echo ${{ env.project_name }}
             - run: |
                 echo ${{ env.PROJECT_NAME }}
-                yq 'with(. ; .profile = '${{ env.project_name }}' | .name = '${{ env.project_name }}')' dbt_project.yml
+                yq 'with(. ; .profile = 'env(project_name)' | .name = 'env(project_name)')' dbt_project.yml
 
             # - uses: mikefarah/yq@master
             #   id: project-name
