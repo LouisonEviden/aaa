@@ -13,9 +13,9 @@ jobs:
             - uses: actions/checkout@v4
             - run: yq '.' .github/env.yml -os
             - run: |
-                for i in $(yq '.' .github/env.yml -os); do
+                while read -r proc;do
                     "$i" >> $GITHUB_ENV
-                done
+                done <<< "$(yq '.' .github/env.yml -os)"
             - run: echo ${{env.project_name}}
             - run: |
                 echo ${{env.project_name}}
