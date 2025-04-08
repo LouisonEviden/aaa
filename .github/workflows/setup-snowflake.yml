@@ -11,20 +11,17 @@ jobs:
         runs-on: ubuntu-latest
         steps:
             - uses: actions/checkout@v4
-            - run: yq '.' .github/env.yml -os
-            - run: |
+            - name: Setup Env variables
+              run: |
                 while read -r i;do
                     echo "$i" >> $GITHUB_ENV
                 done <<< "$(yq '.' .github/env.yml -os)"
-            - run: echo ${{ env.project_name }}
+            - run: yq 'with(. ; .profile = 'env(project_name)' | .name = 'env(project_name)')' dbt_project.yml
+            - run: cat dbt_project.yml
             - run: |
-                echo ${{ env.PROJECT_NAME }}
-                yq 'with(. ; .profile = 'env(project_name)' | .name = 'env(project_name)')' dbt_project.yml
-
-            # - uses: mikefarah/yq@master
-            #   id: project-name
-            #   with:
-            #     cmd: yq '.project-name' .github/config.yml
+                yq '(.template_profile_name | key) = "env(project_name)"' profiles.yml
+                yq 'with(.[env(project_name)].outputs.dev; .account = "env(snowflake_account)" | .database = "env(snowflake_database)")' profiles.yml
+            - run: cat profiles.yml
         # Update dbt files (dbt_project.yml, profiles.yml, schema.yml)
     # setup-snowflake:
         # Check if user is account admin ?

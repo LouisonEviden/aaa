@@ -1,5 +1,5 @@
 # For Github Actions only
-dbtservicenow2snow:
+template_profile_name:
   target: dev
   outputs:
     dev:
