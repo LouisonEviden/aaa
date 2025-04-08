@@ -16,10 +16,10 @@ jobs:
                 while read -r i;do
                     echo "$i" >> $GITHUB_ENV
                 done <<< "$(yq '.' .github/env.yml -os)"
-            - run: echo ${{env.project_name}}
+            - run: echo ${{ env.project_name }}
             - run: |
-                echo ${{env.project_name}}
-                yq 'with(. ; .profile = '${{env.project_name}}' | .name = '${{env.project_name}}')' dbt_project.yml
+                echo ${{ env.PROJECT_NAME }}
+                yq 'with(. ; .profile = '${{ env.project_name }}' | .name = '${{ env.project_name }}')' dbt_project.yml
 
             # - uses: mikefarah/yq@master
             #   id: project-name
