@@ -19,16 +19,14 @@ jobs:
             - name: Update dbt_project.yml
               run: yq -i 'with(. ; .profile = env(PROJECT_NAME) | .name = env(PROJECT_NAME))' dbt_project.yml
             - run: cat dbt_project.yml
-
-
-            - run: yq 'with(.template_profile_name.outputs[]; .account = env(SNOWFLAKE_ACCOUNT) | .database = env(SNOWFLAKE_DATABASE) | .role = env(SNOWFLAKE_ROLE) | .user = env(SNOWFLAKE_USER) | .warehouse = env(SNOWFLAKE_WAREHOUSE))' profiles.yml
-
-
             - name: Update profiles.yml
               run: |
                 yq -i '(.template_profile_name | key) = env(PROJECT_NAME)' profiles.yml
                 yq -i 'with(.[env(PROJECT_NAME)].outputs[]; .account = env(SNOWFLAKE_ACCOUNT) | .database = env(SNOWFLAKE_DATABASE) | .role = env(SNOWFLAKE_ROLE) | .user = env(SNOWFLAKE_USER) | .warehouse = env(SNOWFLAKE_WAREHOUSE))' profiles.yml
-                - run: cat profiles.yml
+            - run: cat profiles.yml
+            - name: Update models/schema.yml
+              run: yq -i 'with(.sources.[]; .database = env(SNOWFLAKE_DATABASE))' models/schema.yml
+            - run: cat models/schema.yml
         # Update dbt files (dbt_project.yml, profiles.yml, schema.yml)
     # setup-snowflake:
         # Check if user is account admin ?
