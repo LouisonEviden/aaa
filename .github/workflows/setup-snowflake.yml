@@ -51,7 +51,7 @@ jobs:
             - run: pip install snowflake-cli
             - run: snow --help
             # Use default database
-            - run: snow connection add --connection-name SETUP --account ${{ vars.SNOW_ACCOUNT }} --user ${{ vars.SNOW_USER }} --password ${{ secrets.SNOW_PASSWORD }} --database --schema --role ${{ vars.SNOW_ROLE }} --warehouse ${{ vars.SNOW_WAREHOUSE }}
+            - run: snow connection add --connection-name SETUP --account ${{ vars.SNOW_ACCOUNT }} --user ${{ vars.SNOW_USER }} --password ${{ secrets.SNOW_PASSWORD }} --database SNOWFLAKE --schema INFORMATION_SCHEMA --role ${{ vars.SNOW_ROLE }} --warehouse ${{ vars.SNOW_WAREHOUSE }}
             - run: snow object create database name=${{ env.SNOWFLAKE_DATABASE }} --if-not-exists
             # export SNOWFLAKE_CONNECTIONS_MYCONNECTION_PASSWORD=
             # export SNOWFLAKE_DEFAULT_CONNECTION_NAME="myconnection"
