@@ -50,9 +50,8 @@ jobs:
                 envFile: '.github/.env'
             - run: pip install snowflake-cli
             - run: snow --help
-            - run: snow connection add --connection-name SETUP --account ${{ vars.SNOW_ACCOUNT }} --user ${{ vars.SNOW_USER }} -- password ${{ secrets.SNOW_PASSWORD }}
-            # --role ${{ vars.SNOW_ROLE }} --warehouse ${{ vars.SNOW_WAREHOUSE }}
-            - run: snow object create database name=${{ env.SNOWFLAKE_DATABASE }} --if-not-exists --warehouse ${{ vars.SNOW_WAREHOUSE }} --role ${{ vars.SNOW_ROLE }}
+            - run: snow connection add --connection-name SETUP --account ${{ vars.SNOW_ACCOUNT }} --user ${{ vars.SNOW_USER }} --password ${{ secrets.SNOW_PASSWORD }} --role ${{ vars.SNOW_ROLE }} --warehouse ${{ vars.SNOW_WAREHOUSE }}
+            - run: snow object create database name=${{ env.SNOWFLAKE_DATABASE }} --if-not-exists
             # ~/.config/snowflake/config.toml
             # export SNOWFLAKE_CONNECTIONS_MYCONNECTION_PASSWORD=
             # export SNOWFLAKE_DEFAULT_CONNECTION_NAME="myconnection"
