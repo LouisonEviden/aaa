@@ -41,6 +41,7 @@ jobs:
     setup-snowflake:
         name: Setup Snowflake
         runs-on: ubuntu-latest
+        environment: snowflake-setup
         steps:
             - uses: actions/checkout@v4
             - uses: cardinalby/export-env-action@v2
@@ -48,6 +49,14 @@ jobs:
                 envFile: '.github/.env'
             - run: pip install snowflake-cli
             - run: snow --help
+            - run: snow connection add --connection-name SETUP --account ${{ env.SNOW_ACCOUNT }} --user ${{ env.SNOW_USER }} -- password ${{ secrets.SNOW_PASSWORD }} --role ${{ env.SNOW_ROLE }} --warehouse ${{ env.SNOW_WAREHOUSE }}
+            - run: snow object create database name=${{ env.SNOWFLAKE_DATABASE }} --if-not-exists
+            # ~/.config/snowflake/config.toml
+            # export SNOWFLAKE_CONNECTIONS_MYCONNECTION_PASSWORD=
+            # export SNOWFLAKE_DEFAULT_CONNECTION_NAME="myconnection"
+            # https://docs.snowflake.com/en/developer-guide/snowflake-cli/connecting/configure-connections#define-connections
+
+            #snow object create database/database-role/schema/role/
         # Check if user is account admin ?
         # Create database, schema, roles
         # Assign roles to schema/db

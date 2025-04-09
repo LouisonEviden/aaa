@@ -8,6 +8,19 @@ This repository is a template to generate a DBT project with a Snowflake databas
 
 Add a Github Action secret named `SNOW_PASSWORD` with the snowflake password of your account.
 
+Create a Github environment named `snowflake-setup` with those informations :
+```py
+# Variables
+SNOW_ACCOUNT
+SNOW_ROLE
+SNOW_USER
+SNOW_WAREHOUSE
+# Secrets
+SNOW_PASSWORD
+```
+
+Put in the .github/.env file the configuration you want to use for your DBT transformation.
+
 # Usage
 
 ## For a developer
