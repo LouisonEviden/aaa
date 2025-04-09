@@ -44,7 +44,7 @@ jobs:
         runs-on: ubuntu-latest
         environment: snowflake-setup
         env:
-          SNOWFLAKE_SETUP_PASSWORD: ${{ secrets.SNOW_PASSWORD }}
+          SNOWFLAKE_CONNECTIONS_SETUP_PASSWORD: ${{ secrets.SNOW_PASSWORD }}
         steps:
             - uses: actions/checkout@v4
             - uses: cardinalby/export-env-action@v2
