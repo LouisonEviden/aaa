@@ -58,6 +58,9 @@ jobs:
             - run: cat ~/.config/snowflake/config.toml
             - run: snow connection test
             - run: snow object create database name=${{ env.SNOWFLAKE_DATABASE }} --if-not-exists
+            - run: snow object create schema name=Bronze --if-not-exists --database=${{ env.SNOWFLAKE_DATABASE }}
+            - run: snow object create schema name=Silver --if-not-exists --database=${{ env.SNOWFLAKE_DATABASE }}
+            - run: snow object create schema name=Gold --if-not-exists --database=${{ env.SNOWFLAKE_DATABASE }}
             # export SNOWFLAKE_CONNECTIONS_MYCONNECTION_PASSWORD=
             # export SNOWFLAKE_DEFAULT_CONNECTION_NAME="myconnection"
             # https://docs.snowflake.com/en/developer-guide/snowflake-cli/connecting/configure-connections#define-connections
