@@ -52,8 +52,10 @@ jobs:
             - run: snow --help
             # Use default database
             - run: cat ~/.config/snowflake/config.toml
+            - run: cat ~/.config/snowflake/connection.toml
             - run: snow connection add --connection-name SETUP --account ${{ vars.SNOW_ACCOUNT }} --user ${{ vars.SNOW_USER }} --password ${{ secrets.SNOW_PASSWORD }} --database SNOWFLAKE --schema INFORMATION_SCHEMA --role ${{ vars.SNOW_ROLE }} --warehouse ${{ vars.SNOW_WAREHOUSE }} --default --no-interactive
             - run: cat ~/.config/snowflake/config.toml
+            - run: cat ~/.config/snowflake/connection.toml
             - run: snow connection test
             - run: snow object create database name=${{ env.SNOWFLAKE_DATABASE }} --if-not-exists
             # export SNOWFLAKE_CONNECTIONS_MYCONNECTION_PASSWORD=
