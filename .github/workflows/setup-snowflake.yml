@@ -53,7 +53,6 @@ jobs:
             - run: pip install snowflake-cli
             # Use default database
             - run: snow connection add --connection-name SETUP --account ${{ vars.SNOW_ACCOUNT }} --user ${{ vars.SNOW_USER }} --database SNOWFLAKE --schema INFORMATION_SCHEMA --role ${{ vars.SNOW_ROLE }} --warehouse ${{ vars.SNOW_WAREHOUSE }} --default --no-interactive
-            - run: snow connection test
             - name: Create database
               run: snow object create database name=${{ env.SNOWFLAKE_DATABASE }} --if-not-exists
             - name: Create Schemas
@@ -67,7 +66,7 @@ jobs:
                 snow object create role name=${{ env.SNOWFLAKE_READER_ROLE_NAME }} --if-not-exists
             - name: Grant privileges to roles
               run: |
-                snow sql --query "grant select on all tables in schema <% database %>.Gold to role <% role %>" --variable "database=${{ env.SNOWFLAKE_DATABASE }}" --variable "reader_role=${{ env.SNOWFLAKE_READER_ROLE_NAME }}"
+                snow sql --query "grant select on all tables in schema <% database %>.Gold to role <% role %>" --variable "database=${{ env.SNOWFLAKE_DATABASE }}" --variable "role=${{ env.SNOWFLAKE_READER_ROLE_NAME }}"
                 snow sql --query "grant all privileges on database <% database %> to role <% role %>" --variable "database=${{ env.SNOWFLAKE_DATABASE }}" --variable "role=${{ env.SNOWFLAKE_DATA_ENGINEER_ROLE_NAME }}"
             # export SNOWFLAKE_CONNECTIONS_MYCONNECTION_PASSWORD=
             # export SNOWFLAKE_DEFAULT_CONNECTION_NAME="myconnection"
