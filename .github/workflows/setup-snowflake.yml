@@ -4,76 +4,77 @@ concurrency: snowflake-setup
 on:
     workflow_dispatch:
 jobs:
+    check-pr-rights:
+      name: Check Github Action rights for PR
+      runs-on: ubuntu-latest
+      steps:
+        - name: Get repo permission
+          env:
+            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          run: gh api https://api.github.com/repos/${{ github.repository }}/actions/permissions/workflow
+
     setup-dbt:
-        name: Update DBT project files
-        runs-on: ubuntu-latest
-        permissions:
-            contents: write
-            pull-requests: write
-        steps:
-            - uses: actions/checkout@v4
-            - uses: cardinalby/export-env-action@v2
-              with:
-                envFile: '.github/.env'
-            - name: Update dbt_project.yml
-              run: |
-                yq -i 'with(. ; .profile = env(PROJECT_NAME) | .name = env(PROJECT_NAME))' dbt_project.yml
-                yq -i '(.models.model_name | key) = env(PROJECT_NAME)' dbt_project.yml
-            - name: Update profiles.yml
-              run: |
-                yq -i '(.template_profile_name | key) = env(PROJECT_NAME)' profiles.yml
-                yq -i 'with(.[env(PROJECT_NAME)].outputs[]; .account = env(SNOWFLAKE_ACCOUNT) | .database = env(SNOWFLAKE_DATABASE) | .role = env(SNOWFLAKE_ROLE) | .user = env(SNOWFLAKE_USER) | .warehouse = env(SNOWFLAKE_WAREHOUSE))' profiles.yml
-            - name: Update models/schema.yml
-              run: yq -i 'with(.sources.[]; .database = env(SNOWFLAKE_DATABASE))' models/schema.yml
-            - run: cat models/schema.yml
-            - name: Create Pull Request
-              uses: peter-evans/create-pull-request@v7
-              with:
-                token: ${{ secrets.GITHUB_TOKEN }}
-                commit-message: Set up DBT
-                branch: github_action/DBT_setup
-                title: DBT config set up
+      name: Update DBT project files
+      runs-on: ubuntu-latest
+      permissions:
+          contents: write
+          pull-requests: write
+      steps:
+        - uses: actions/checkout@v4
+        - uses: cardinalby/export-env-action@v2
+          with:
+            envFile: '.github/.env'
+        - name: Update dbt_project.yml
+          run: |
+            yq -i 'with(. ; .profile = env(PROJECT_NAME) | .name = env(PROJECT_NAME))' dbt_project.yml
+            yq -i '(.models.model_name | key) = env(PROJECT_NAME)' dbt_project.yml
+        - name: Update profiles.yml
+          run: |
+            yq -i '(.template_profile_name | key) = env(PROJECT_NAME)' profiles.yml
+            yq -i 'with(.[env(PROJECT_NAME)].outputs[]; .account = env(SNOWFLAKE_ACCOUNT) | .database = env(SNOWFLAKE_DATABASE) | .role = env(SNOWFLAKE_ROLE) | .user = env(SNOWFLAKE_USER) | .warehouse = env(SNOWFLAKE_WAREHOUSE))' profiles.yml
+        - name: Update models/schema.yml
+          run: yq -i 'with(.sources.[]; .database = env(SNOWFLAKE_DATABASE))' models/schema.yml
+        - run: cat models/schema.yml
+        - name: Create Pull Request
+          uses: peter-evans/create-pull-request@v7
+          with:
+            token: ${{ secrets.GITHUB_TOKEN }}
+            commit-message: Set up DBT
+            branch: github_action/DBT_setup
+            title: DBT config set up
 
     setup-snowflake:
-        name: Setup Snowflake
-        runs-on: ubuntu-latest
-        environment: snowflake-setup
-        env:
-          SNOWFLAKE_CONNECTIONS_SETUP_PASSWORD: ${{ secrets.SNOW_PASSWORD }}
-        steps:
-            - uses: actions/checkout@v4
-            - uses: cardinalby/export-env-action@v2
-              with:
-                envFile: '.github/.env'
-            - run: pip install snowflake-cli
-            # Use default database
-            - run: snow connection add --connection-name SETUP --account ${{ vars.SNOW_ACCOUNT }} --user ${{ vars.SNOW_USER }} --database SNOWFLAKE --schema INFORMATION_SCHEMA --role ${{ vars.SNOW_ROLE }} --warehouse ${{ vars.SNOW_WAREHOUSE }} --default --no-interactive
-            - name: Create database
-              run: snow object create database name=${{ env.SNOWFLAKE_DATABASE }} --if-not-exists
-            - name: Create Schemas
-              run: |
-                snow object create schema name=Bronze --if-not-exists --database=${{ env.SNOWFLAKE_DATABASE }}
-                snow object create schema name=Silver --if-not-exists --database=${{ env.SNOWFLAKE_DATABASE }}
-                snow object create schema name=Gold --if-not-exists --database=${{ env.SNOWFLAKE_DATABASE }}
-            - name: Create roles
-              run: |
-                snow object create role name=${{ env.SNOWFLAKE_DATA_ENGINEER_ROLE_NAME }} --if-not-exists
-                snow object create role name=${{ env.SNOWFLAKE_READER_ROLE_NAME }} --if-not-exists
-            - name: Grant privileges to reader role
-              run: |
-                snow sql --query "grant usage on database <% database %> to role <% role %>" --variable "database=${{ env.SNOWFLAKE_DATABASE }}" --variable "role=${{ env.SNOWFLAKE_READER_ROLE_NAME }}"
-                snow sql --query "grant usage on schema <% database %>.Gold to role <% role %>" --variable "database=${{ env.SNOWFLAKE_DATABASE }}" --variable "role=${{ env.SNOWFLAKE_READER_ROLE_NAME }}"
-                snow sql --query "grant select on all tables in schema <% database %>.Gold to role <% role %>" --variable "database=${{ env.SNOWFLAKE_DATABASE }}" --variable "role=${{ env.SNOWFLAKE_READER_ROLE_NAME }}"
-            - name: Grant privileges to data engineer role
-              run: |
-                snow sql --query "grant usage on database <% database %> to role <% role %>" --variable "database=${{ env.SNOWFLAKE_DATABASE }}" --variable "role=${{ env.SNOWFLAKE_DATA_ENGINEER_ROLE_NAME }}"
-                snow sql --query "grant usage on all schemas in database <% database %> to role <% role %>" --variable "database=${{ env.SNOWFLAKE_DATABASE }}" --variable "role=${{ env.SNOWFLAKE_DATA_ENGINEER_ROLE_NAME }}"
-                snow sql --query "grant all privileges on all schemas in database <% database %> to role <% role %>" --variable "database=${{ env.SNOWFLAKE_DATABASE }}" --variable "role=${{ env.SNOWFLAKE_DATA_ENGINEER_ROLE_NAME }}"
-            # export SNOWFLAKE_CONNECTIONS_MYCONNECTION_PASSWORD=
-            # export SNOWFLAKE_DEFAULT_CONNECTION_NAME="myconnection"
-            # https://docs.snowflake.com/en/developer-guide/snowflake-cli/connecting/configure-connections#define-connections
-
-            #snow object create database/database-role/schema/role/
-        # Check if user is account admin ?
-        # Create database, schema, roles
-        # Assign roles to schema/db
+      name: Setup Snowflake
+      runs-on: ubuntu-latest
+      environment: snowflake-setup
+      env:
+        SNOWFLAKE_CONNECTIONS_SETUP_PASSWORD: ${{ secrets.SNOW_PASSWORD }}
+      steps:
+        - uses: actions/checkout@v4
+        - uses: cardinalby/export-env-action@v2
+          with:
+            envFile: '.github/.env'
+        - run: pip install snowflake-cli
+        # Use default database
+        - run: snow connection add --connection-name SETUP --account ${{ vars.SNOW_ACCOUNT }} --user ${{ vars.SNOW_USER }} --database SNOWFLAKE --schema INFORMATION_SCHEMA --role ${{ vars.SNOW_ROLE }} --warehouse ${{ vars.SNOW_WAREHOUSE }} --default --no-interactive
+        - name: Create database
+          run: snow object create database name=${{ env.SNOWFLAKE_DATABASE }} --if-not-exists
+        - name: Create Schemas
+          run: |
+            snow object create schema name=Bronze --if-not-exists --database=${{ env.SNOWFLAKE_DATABASE }}
+            snow object create schema name=Silver --if-not-exists --database=${{ env.SNOWFLAKE_DATABASE }}
+            snow object create schema name=Gold --if-not-exists --database=${{ env.SNOWFLAKE_DATABASE }}
+        - name: Create roles
+          run: |
+            snow object create role name=${{ env.SNOWFLAKE_DATA_ENGINEER_ROLE_NAME }} --if-not-exists
+            snow object create role name=${{ env.SNOWFLAKE_READER_ROLE_NAME }} --if-not-exists
+        - name: Grant privileges to reader role
+          run: |
+            snow sql --query "grant usage on database <% database %> to role <% role %>" --variable "database=${{ env.SNOWFLAKE_DATABASE }}" --variable "role=${{ env.SNOWFLAKE_READER_ROLE_NAME }}"
+            snow sql --query "grant usage on schema <% database %>.Gold to role <% role %>" --variable "database=${{ env.SNOWFLAKE_DATABASE }}" --variable "role=${{ env.SNOWFLAKE_READER_ROLE_NAME }}"
+            snow sql --query "grant select on all tables in schema <% database %>.Gold to role <% role %>" --variable "database=${{ env.SNOWFLAKE_DATABASE }}" --variable "role=${{ env.SNOWFLAKE_READER_ROLE_NAME }}"
+        - name: Grant privileges to data engineer role
+          run: |
+            snow sql --query "grant usage on database <% database %> to role <% role %>" --variable "database=${{ env.SNOWFLAKE_DATABASE }}" --variable "role=${{ env.SNOWFLAKE_DATA_ENGINEER_ROLE_NAME }}"
+            snow sql --query "grant usage on all schemas in database <% database %> to role <% role %>" --variable "database=${{ env.SNOWFLAKE_DATABASE }}" --variable "role=${{ env.SNOWFLAKE_DATA_ENGINEER_ROLE_NAME }}"
+            snow sql --query "grant all privileges on all schemas in database <% database %> to role <% role %>" --variable "database=${{ env.SNOWFLAKE_DATABASE }}" --variable "role=${{ env.SNOWFLAKE_DATA_ENGINEER_ROLE_NAME }}"
