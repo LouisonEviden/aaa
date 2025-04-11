@@ -1,24 +1,24 @@
 # For Github Actions only
-template_profile_name:
+PROJECT_NAME_TEST:
   target: dev
   outputs:
     dev:
-      account:
-      database:
+      account: SNOWFLAKE_ACCOUNT_TEST
+      database: SNOWFLAKE_DATABASE_TEST
       password: "{{ env_var('SNOW_PASSWORD') }}"
-      role:
+      role: SNOWFLAKE_ROLE_TEST
       schema: TECH
       threads: 1
       type: snowflake
-      user:
-      warehouse:
+      user: SNOWFLAKE_USER_TEST
+      warehouse: SNOWFLAKE_WAREHOUSE_TEST
     prod:
-      account:
-      database:
+      account: SNOWFLAKE_ACCOUNT_TEST
+      database: SNOWFLAKE_DATABASE_TEST
       password: "{{ env_var('SNOW_PASSWORD') }}"
-      role:
+      role: SNOWFLAKE_ROLE_TEST
       schema: BRONZE
       threads: 1
       type: snowflake
-      user:
-      warehouse:
+      user: SNOWFLAKE_USER_TEST
+      warehouse: SNOWFLAKE_WAREHOUSE_TEST

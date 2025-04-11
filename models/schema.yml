@@ -1,8 +1,7 @@
 version: 1
-
 sources:
   - name: source_db
-    database:
+    database: SNOWFLAKE_DATABASE_TEST
     schema: RAW
     tables:
       - name: TABLE_NAME
